@@ -1,5 +1,5 @@
-import express from 'express';
-import { createSchema, createYoga } from "graphql-yoga";
+const express = require('express');
+import { createGraphQLError, createSchema, createYoga } from "graphql-yoga";
 
 const app = express();
 function formatError(error: any,message: any){
@@ -10,6 +10,8 @@ returnError ={
     path:error?.path,
     extensions:error?.extensions|| code
 }
+
+return createGraphQLError(error.message,returnError)
 }
 const resolvers = {
     Query: {
@@ -56,7 +58,7 @@ const server = createYoga({
   schema: executableSchema,
   graphiql:true,
   maskedErrors:{
-    maskError(error,message): void{
+    maskError(error,message){
         return formatError(error,message);
     }
   }
